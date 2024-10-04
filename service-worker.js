@@ -6,10 +6,10 @@ chrome.runtime.onConnect.addListener(function (port) {
   var extensionListener = function (message, sender, sendResponse) {
     // The original connection event doesn't include the tab ID of the
     // DevTools page, so we need to send it explicitly.
-    if (message.name == "init") {
+    if (message.name == "request") {
       connections[message.tabId] = port;
       console.log("seven");
-      fetch("https://zhidao.baidu.com/question/373129900165435892.html", {
+      fetch(message.data.url, {
         headers: {
           accept:
             "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",

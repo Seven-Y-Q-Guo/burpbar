@@ -9,7 +9,9 @@ document.querySelector("button").addEventListener("click", () => {
   console.log(backgroundPageConnection);
 
   backgroundPageConnection.postMessage({
-    name: "init",
-    tabId: chrome.devtools.inspectedWindow.tabId,
+    name: "request",
+    data: {
+      url: document.querySelector("input").value,
+    },
   });
 });
