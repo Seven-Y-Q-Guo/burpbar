@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -13,6 +13,25 @@ import "./App.css";
 function App() {
   const [value, setValue] = useState("");
   const [selectedOption, setSelectedOption] = useState("GET");
+  const [backgroundPageConnection, setBackgroundPageConnection] =
+    useState(null);
+
+  useEffect(() => {
+    setBackgroundPageConnection(
+      chrome.runtime.connect({
+        name: "burpbar",
+      }),
+    );
+  }, []);
+
+  useEffect(() => {
+    if (backgroundPageConnection) {
+      backgroundPageConnection.onMessage.addListener(function (message) {
+        // sending response back to what sent this message
+        console.log(message, "seven");
+      });
+    }
+  }, [backgroundPageConnection]);
 
   return (
     <div className="flex">
@@ -41,10 +60,6 @@ function App() {
       />
       <Button
         onClick={() => {
-          var backgroundPageConnection = chrome.runtime.connect({
-            name: "burpbar",
-          });
-          console.log(selectedOption);
           backgroundPageConnection.postMessage({
             name: "request",
             data: {

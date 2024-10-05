@@ -1,6 +1,3 @@
-// setTimeout(() => {
-//   console.log("timeout");
-
 var connections = {};
 chrome.runtime.onConnect.addListener(function (port) {
   var extensionListener = function (message, sender, sendResponse) {
@@ -35,7 +32,9 @@ chrome.runtime.onConnect.addListener(function (port) {
         credentials: "include",
       })
         .then((res) => res.text())
-        .then((res) => console.log(res));
+        .then((res) => {
+          port.postMessage({ name: "seven" });
+        });
       return;
     }
 
