@@ -33,7 +33,7 @@ chrome.runtime.onConnect.addListener(function (port) {
       })
         .then((res) => res.text())
         .then((res) => {
-          port.postMessage({ name: "seven" });
+          port.postMessage({ res });
         });
       return;
     }
