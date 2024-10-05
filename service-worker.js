@@ -6,6 +6,7 @@ chrome.runtime.onConnect.addListener(function (port) {
     if (message.name == "request") {
       connections[message.tabId] = port;
       const { url, ...rest } = message?.data || {};
+
       fetch(url, rest)
         .then((res) => res.text())
         .then((res) => {

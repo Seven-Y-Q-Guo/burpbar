@@ -9,6 +9,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableRow,
+} from "@/components/ui/table";
 import "./App.css";
 
 function App() {
@@ -17,13 +25,18 @@ function App() {
   const [selectedOption, setSelectedOption] = useState("GET");
   const [backgroundPageConnection, setBackgroundPageConnection] =
     useState(null);
+  const [parameters, setParameters] = useState([]);
 
   useEffect(() => {
-    setBackgroundPageConnection(
-      chrome.runtime.connect({
-        name: "burpbar",
-      }),
-    );
+    // no need connection in dev mode
+    console.log(import.meta.env.MODE);
+    if (import.meta.env.MODE !== "development") {
+      setBackgroundPageConnection(
+        chrome.runtime.connect({
+          name: "burpbar",
+        }),
+      );
+    }
   }, []);
 
   useEffect(() => {
@@ -34,6 +47,30 @@ function App() {
       });
     }
   }, [backgroundPageConnection]);
+
+  useEffect(() => {
+    if (value) {
+      const url = new URL(value);
+
+      setParameters(url.searchParams);
+    }
+  }, [value]);
+
+  useEffect(() => {
+    if (parameters.length) {
+      const url = new URL(value);
+
+      setValue(
+        url.origin +
+          url.pathname +
+          "?" +
+          parameters
+            .map((parameter) => `${parameter[0]}=${parameter[1]}`)
+            .join("&"),
+      );
+      // console.log(parameters);
+    }
+  }, [parameters, value]);
 
   return (
     <>
@@ -63,19 +100,72 @@ function App() {
         />
         <Button
           onClick={() => {
-            backgroundPageConnection.postMessage({
-              name: "request",
-              data: {
-                url: value,
-                method: selectedOption,
-              },
-            });
+            console.log(import.meta.env.MODE);
+            if (import.meta.env.MODE !== "development") {
+              backgroundPageConnection.postMessage({
+                name: "request",
+                data: {
+                  url: value,
+                  method: selectedOption,
+                },
+              });
+            }
           }}
         >
           Send
         </Button>
       </div>
-      <Textarea value={textareaValue} />
+      <Tabs defaultValue="Parameters" className="mt-2.5">
+        <TabsList>
+          <TabsTrigger value="Parameters">Parameters</TabsTrigger>
+          <TabsTrigger value="Body">Body</TabsTrigger>
+          <TabsTrigger value="Headers">Headers</TabsTrigger>
+        </TabsList>
+        <TabsContent value="Parameters">
+          <Table className="caption-top">
+            <TableCaption className="text-left my-0 mx-2">
+              Query Parameters
+            </TableCaption>
+            <TableBody>
+              {[...parameters].map((parameter, index) => {
+                return (
+                  <TableRow key={parameter[0]}>
+                    <TableCell className="font-medium">
+                      <Input
+                        placeholder="Key"
+                        value={parameter[0]}
+                        onChange={(e) => {
+                          const parametersClone = [...parameters];
+                          parametersClone[index] = [...parametersClone[index]];
+                          parametersClone[index][0] = e.target.value;
+
+                          setParameters(parametersClone);
+                        }}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Input
+                        placeholder="Value"
+                        value={parameter[1]}
+                        onChange={(e) => {
+                          const parametersClone = [...parameters];
+                          parametersClone[index] = [...parametersClone[index]];
+                          parametersClone[index][1] = e.target.value;
+
+                          setParameters(parametersClone);
+                        }}
+                      />
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TabsContent>
+        <TabsContent value="Body">Body</TabsContent>
+        <TabsContent value="Headers">Headers</TabsContent>
+      </Tabs>
+      <Textarea value={textareaValue} readOnly />
     </>
   );
 }
