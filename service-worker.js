@@ -30,7 +30,7 @@ chrome.runtime.onConnect.addListener(function (port) {
           "https://www.baidu.com/link?url=uQrbCfgtner3tSXKUrF7uUKIoYbBgUFLhr1ITGlPIxSZL6ZIMTI7YA07-4KVqVVGyW2dNwK3x5nXKjXd4gfH88ii4JKgXyfeoZUXdlcLe2_&wd=&eqid=e896516909ac6bc90000000666fff716",
         referrerPolicy: "unsafe-url",
         body: null,
-        method: "GET",
+        method: message.data.method,
         mode: "cors",
         credentials: "include",
       })

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -10,9 +11,17 @@ import {
 import "./App.css";
 
 function App() {
+  const [value, setValue] = useState("");
+  const [selectedOption, setSelectedOption] = useState("GET");
+
   return (
-    <>
-      <Select defaultValue="GET">
+    <div className="flex">
+      <Select
+        value={selectedOption}
+        onValueChange={(value) => {
+          setSelectedOption(value);
+        }}
+      >
         <SelectTrigger className="w-[180px]">
           <SelectValue />
         </SelectTrigger>
@@ -23,9 +32,31 @@ function App() {
           <SelectItem value="DELETE">DELETE</SelectItem>
         </SelectContent>
       </Select>
-      <Input placeholder="Enter a URL" />
-      <Button>Click me</Button>
-    </>
+      <Input
+        placeholder="Enter a URL"
+        value={value}
+        onChange={(e) => {
+          setValue(e.target.value);
+        }}
+      />
+      <Button
+        onClick={() => {
+          var backgroundPageConnection = chrome.runtime.connect({
+            name: "burpbar",
+          });
+          console.log(selectedOption);
+          backgroundPageConnection.postMessage({
+            name: "request",
+            data: {
+              url: value,
+              method: selectedOption,
+            },
+          });
+        }}
+      >
+        Send
+      </Button>
+    </div>
   );
 }
 
