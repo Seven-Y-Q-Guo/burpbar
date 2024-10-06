@@ -8,7 +8,17 @@ chrome.runtime.onConnect.addListener(function (port) {
       const { url, ...rest } = message?.data || {};
 
       fetch(url, rest)
-        .then((res) => res.text())
+        .then(async (res) => {
+          const resClone = res.clone();
+          const content = await res.text();
+          const blob = await resClone.blob();
+          const contentLength = res.headers.get("content-length") || blob.size;
+
+          return Promise.resolve({
+            content,
+            contentLength,
+          });
+        })
         .then((res) => {
           port.postMessage({ res });
         });

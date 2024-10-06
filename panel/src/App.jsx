@@ -21,7 +21,7 @@ import "./App.css";
 
 function App() {
   const [value, setValue] = useState("");
-  const [textareaValue, setTextareaValue] = useState("");
+  const [textareaInfo, setTextareaInfo] = useState({});
   const [selectedOption, setSelectedOption] = useState("GET");
   const [backgroundPageConnection, setBackgroundPageConnection] =
     useState(null);
@@ -43,7 +43,7 @@ function App() {
     if (backgroundPageConnection) {
       backgroundPageConnection.onMessage.addListener(function (message) {
         console.log(message.res, "seven");
-        setTextareaValue(message.res);
+        setTextareaInfo(message.res);
       });
     }
   }, [backgroundPageConnection]);
@@ -68,7 +68,6 @@ function App() {
             .map((parameter) => `${parameter[0]}=${parameter[1]}`)
             .join("&"),
       );
-      // console.log(parameters);
     }
   }, [parameters, value]);
 
@@ -165,7 +164,18 @@ function App() {
         <TabsContent value="Body">Body</TabsContent>
         <TabsContent value="Headers">Headers</TabsContent>
       </Tabs>
-      <Textarea value={textareaValue} readOnly />
+      {textareaInfo.content && (
+        <span class="flex items-center text-sm font-medium text-gray-900 dark:text-white me-3">
+          <span class="flex w-2.5 h-2.5 bg-teal-500 rounded-full me-1.5 flex-shrink-0"></span>
+          <span>Status: 200</span>
+          <span className="mx-2">Size: {textareaInfo.contentLength} B</span>
+        </span>
+      )}
+      <Textarea
+        value={textareaInfo.content}
+        readOnly
+        style={{ height: "500px" }}
+      />
     </>
   );
 }
