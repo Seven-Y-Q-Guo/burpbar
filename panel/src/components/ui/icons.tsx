@@ -1,6 +1,7 @@
 import play from "../../assets/play.png";
 import load from "../../assets/load.png";
 import hack from "../../assets/hack.png";
+import split from "../../assets/split.png";
 
 export const Icons = {
   play: (props) => (
@@ -11,5 +12,8 @@ export const Icons = {
   ),
   hack: (props) => (
     <img className={"w-6 mr-1 " + (props.className || "")} src={hack} />
+  ),
+  split: (props) => (
+    <img className={"w-6 mr-1 " + (props.className || "")} src={split} />
   ),
 };
