@@ -165,8 +165,8 @@ function App() {
         <TabsContent value="Headers">Headers</TabsContent>
       </Tabs>
       {textareaInfo.content && (
-        <span class="flex items-center text-sm font-medium text-gray-900 dark:text-white me-3">
-          <span class="flex w-2.5 h-2.5 bg-teal-500 rounded-full me-1.5 flex-shrink-0"></span>
+        <span className="flex items-center text-sm font-medium text-gray-900 dark:text-white me-3">
+          <span className="flex w-2.5 h-2.5 bg-teal-500 rounded-full me-1.5 flex-shrink-0"></span>
           <span>Status: 200</span>
           <span className="mx-2">Size: {textareaInfo.contentLength} B</span>
         </span>

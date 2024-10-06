@@ -10,6 +10,7 @@ chrome.runtime.onConnect.addListener(function (port) {
       fetch(url, rest)
         .then(async (res) => {
           const resClone = res.clone();
+          const status = res.status;
           const content = await res.text();
           const blob = await resClone.blob();
           const contentLength = res.headers.get("content-length") || blob.size;
@@ -17,6 +18,7 @@ chrome.runtime.onConnect.addListener(function (port) {
           return Promise.resolve({
             content,
             contentLength,
+            status,
           });
         })
         .then((res) => {
