@@ -23,7 +23,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 import { Icons } from "@/components/ui/icons";
 
 import { isValidUrl } from "./utils";
@@ -31,6 +33,8 @@ import "./App.css";
 
 function App() {
   const [value, setValue] = useState("");
+  const [body, setBody] = useState("");
+  const [tabValue, setTabValue] = useState("Parameters");
   const [textareaInfo, setTextareaInfo] = useState({});
   const [selectedOption, setSelectedOption] = useState("GET");
   const [backgroundPageConnection, setBackgroundPageConnection] =
@@ -159,6 +163,61 @@ function App() {
                 The URL you input is not correct, please try again.
               </Label>
             )}
+            <div className="flex items-center mt-4">
+              <Checkbox
+                checked={selectedOption === "POST" ? true : false}
+                onCheckedChange={(checked) => {
+                  if (checked) {
+                    setSelectedOption("POST");
+                    setTabValue("Body");
+                  } else {
+                    setSelectedOption("GET");
+                    setTabValue("Parameters");
+                  }
+                }}
+                className="mr-2"
+                id="postData"
+              />
+              <label
+                htmlFor="postData"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 mr-4"
+              >
+                Post data
+              </label>
+              <Checkbox className="mr-2" id="referer" />
+              <label
+                htmlFor="referer"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 mr-4"
+              >
+                Referer
+              </label>
+              <Checkbox className="mr-2" id="userAgent" />
+              <label
+                htmlFor="userAgent"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 mr-4"
+              >
+                User Agent
+              </label>
+              <Checkbox className="mr-2" id="cookies" />
+              <label
+                htmlFor="cookies"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 mr-4"
+              >
+                Cookies
+              </label>
+              <a
+                readOnly
+                href="#"
+                className="inline-flex items-center font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                onClick={() => {
+                  setValue("");
+                  // console.log(123);
+                }}
+              >
+                Clear All
+                <Icons.clear className="ml-1" />
+              </a>
+            </div>
           </AccordionContent>
         </AccordionItem>
       </Accordion>
@@ -204,7 +263,13 @@ function App() {
           Send
         </Button>
       </div>
-      <Tabs defaultValue="Parameters" className="mt-2.5">
+      <Tabs
+        value={tabValue}
+        onValueChange={(val) => {
+          setTabValue(val);
+        }}
+        className="mt-2.5"
+      >
         <TabsList>
           <TabsTrigger value="Parameters">Parameters</TabsTrigger>
           <TabsTrigger value="Body">Body</TabsTrigger>
@@ -251,9 +316,25 @@ function App() {
             </TableBody>
           </Table>
         </TabsContent>
-        <TabsContent value="Body">Body</TabsContent>
+        <TabsContent value="Body">
+          <Table className="caption-top">
+            <TableCaption className="text-left my-0 mx-2">
+              Raw Request Body
+            </TableCaption>
+            <TableBody>
+              <Textarea
+                value={body}
+                onChange={(e) => {
+                  setBody(e.target.value);
+                }}
+                style={{ height: "100px" }}
+              />
+            </TableBody>
+          </Table>
+        </TabsContent>
         <TabsContent value="Headers">Headers</TabsContent>
       </Tabs>
+      <Separator className="my-2" />
       {textareaInfo.content && (
         <span className="flex items-center text-sm font-medium text-gray-900 dark:text-white me-3">
           <span className="flex w-2.5 h-2.5 bg-teal-500 rounded-full me-1.5 flex-shrink-0"></span>
