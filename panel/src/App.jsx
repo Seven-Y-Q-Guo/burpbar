@@ -17,6 +17,13 @@ import {
   TableCell,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+
 import "./App.css";
 
 function App() {
@@ -73,6 +80,36 @@ function App() {
 
   return (
     <>
+      <Accordion type="single" collapsible>
+        <AccordionItem value="item-1">
+          <AccordionTrigger>hackbar</AccordionTrigger>
+          <AccordionContent>
+            <Button
+              onClick={() => {
+                if (import.meta.env.MODE !== "development") {
+                  chrome.devtools.inspectedWindow.eval(
+                    "location.href",
+                    (response) => {
+                      setValue(response);
+                    },
+                  );
+                }
+              }}
+            >
+              Load URL
+            </Button>
+            <Textarea
+              value={value}
+              onChange={(e) => {
+                setValue(e.target.value);
+              }}
+              style={{ height: "100px" }}
+              className="mt-2.5"
+            />
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+
       <div className="flex">
         <Select
           value={selectedOption}
