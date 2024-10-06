@@ -23,6 +23,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Icons } from "@/components/ui/icons";
 
 import "./App.css";
 
@@ -85,6 +86,7 @@ function App() {
           <AccordionTrigger>hackbar</AccordionTrigger>
           <AccordionContent>
             <Button
+              className="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
               onClick={() => {
                 if (import.meta.env.MODE !== "development") {
                   chrome.devtools.inspectedWindow.eval(
@@ -96,7 +98,28 @@ function App() {
                 }
               }}
             >
+              <Icons.load />
               Load URL
+            </Button>
+            <Button
+              className="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+              onClick={() => {
+                if (import.meta.env.MODE !== "development") {
+                  let code =
+                    '{const url = "' + encodeURIComponent(value) + '";';
+                  code += "window.location.href = decodeURIComponent(url);}";
+
+                  chrome.devtools.inspectedWindow.eval(
+                    code,
+                    function (result, isException) {
+                      console.log(result, isException);
+                    },
+                  );
+                }
+              }}
+            >
+              <Icons.play />
+              Execute
             </Button>
             <Textarea
               value={value}
