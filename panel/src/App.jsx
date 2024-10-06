@@ -23,8 +23,10 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Label } from "@/components/ui/label";
 import { Icons } from "@/components/ui/icons";
 
+import { isValidUrl } from "./utils";
 import "./App.css";
 
 function App() {
@@ -57,7 +59,7 @@ function App() {
   }, [backgroundPageConnection]);
 
   useEffect(() => {
-    if (value) {
+    if (value && isValidUrl(value)) {
       const url = new URL(value);
 
       setParameters(url.searchParams);
@@ -65,7 +67,7 @@ function App() {
   }, [value]);
 
   useEffect(() => {
-    if (parameters.length) {
+    if (parameters.length && isValidUrl(value)) {
       const url = new URL(value);
 
       setValue(
@@ -83,7 +85,10 @@ function App() {
     <>
       <Accordion type="single" collapsible>
         <AccordionItem value="item-1">
-          <AccordionTrigger>hackbar</AccordionTrigger>
+          <AccordionTrigger className="justify-start">
+            <Icons.hack />
+            hackbar
+          </AccordionTrigger>
           <AccordionContent>
             <Button
               className="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
@@ -102,6 +107,7 @@ function App() {
               Load URL
             </Button>
             <Button
+              disabled={isValidUrl(value) ? false : true}
               className="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
               onClick={() => {
                 if (import.meta.env.MODE !== "development") {
@@ -127,8 +133,17 @@ function App() {
                 setValue(e.target.value);
               }}
               style={{ height: "100px" }}
-              className="mt-2.5"
+              className={
+                "mt-2.5 " +
+                (value &&
+                  (isValidUrl(value) ? "border-green-500" : "border-red-500"))
+              }
             />
+            {value && !isValidUrl(value) && (
+              <Label className="text-red-500 mt-1 inline-block">
+                The URL you input is not correct, please try again.
+              </Label>
+            )}
           </AccordionContent>
         </AccordionItem>
       </Accordion>

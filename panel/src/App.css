@@ -38,3 +38,15 @@
 .read-the-docs {
     color: #888;
 }
+
+.border-red-500 {
+    border-color: rgb(239 68 68);
+}
+
+.border-green-500 {
+    border-color: rgb(34 197 94);
+}
+
+.text-red-500 {
+    color: rgb(239 68 68);
+}
