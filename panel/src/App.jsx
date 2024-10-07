@@ -28,12 +28,13 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Icons } from "@/components/ui/icons";
 
-import { isValidUrl } from "./utils";
+import { isValidUrl, isValidFormData } from "./utils";
 import "./App.css";
 
 function App() {
   const [value, setValue] = useState("");
   const [body, setBody] = useState("");
+  const [postData, setPostData] = useState("");
   const [tabValue, setTabValue] = useState("Parameters");
   const [textareaInfo, setTextareaInfo] = useState({});
   const [selectedOption, setSelectedOption] = useState("GET");
@@ -115,16 +116,52 @@ function App() {
               className="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
               onClick={() => {
                 if (import.meta.env.MODE !== "development") {
-                  let code =
-                    '{const url = "' + encodeURIComponent(value) + '";';
-                  code += "window.location.href = decodeURIComponent(url);}";
+                  if (selectedOption === "GET") {
+                    let code =
+                      '{const url = "' + encodeURIComponent(value) + '";';
+                    code += "window.location.href = decodeURIComponent(url);}";
 
-                  chrome.devtools.inspectedWindow.eval(
-                    code,
-                    function (result, isException) {
-                      console.log(result, isException);
-                    },
-                  );
+                    chrome.devtools.inspectedWindow.eval(
+                      code,
+                      function (result, isException) {
+                        console.log(result, isException);
+                      },
+                    );
+                  } else {
+                    let fields = Array();
+                    let f_split = postData.trim().split("&");
+                    for (let i in f_split) {
+                      let f = f_split[i].match(/(^.*?)=(.*)/);
+                      if (f.length === 3) {
+                        let item = {};
+                        item["name"] = f[1];
+                        item["value"] = unescape(f[2]);
+                        fields.push(item);
+                      }
+                    }
+                    let code =
+                      '{var post_data = "' +
+                      encodeURIComponent(JSON.stringify(fields)) +
+                      '"; var url = "' +
+                      encodeURIComponent(value) +
+                      '";';
+                    code +=
+                      "var fields = JSON.parse(decodeURIComponent(post_data));";
+                    code += 'const form = document.createElement("form");';
+                    code += 'form.setAttribute("method", "post");';
+                    code +=
+                      'form.setAttribute("action", decodeURIComponent(url));';
+                    code +=
+                      'fields.forEach(function(f) { var input = document.createElement("input"); input.setAttribute("type", "hidden"); input.setAttribute("name", f[\'name\']); input.setAttribute("value", f[\'value\']); form.appendChild(input); });';
+                    code += "document.body.appendChild(form);";
+                    code += "form.submit();}";
+                    chrome.devtools.inspectedWindow.eval(
+                      code,
+                      function (result, isException) {
+                        console.log(result, isException);
+                      },
+                    );
+                  }
                 }
               }}
             >
@@ -163,6 +200,20 @@ function App() {
                 The URL you input is not correct, please try again.
               </Label>
             )}
+            <Textarea
+              value={postData}
+              onChange={(e) => {
+                setPostData(e.target.value);
+              }}
+              style={{ height: "100px" }}
+              className={
+                "mt-2.5 " +
+                (postData &&
+                  (isValidFormData(postData)
+                    ? "border-green-500"
+                    : "border-red-500"))
+              }
+            />
             <div className="flex items-center mt-4">
               <Checkbox
                 checked={selectedOption === "POST" ? true : false}
