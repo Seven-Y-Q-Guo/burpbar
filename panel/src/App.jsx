@@ -88,7 +88,20 @@ function App() {
 
   useEffect(() => {
     if (isValidFormData(postData)) {
-      setBody(postData);
+      console.log(postData.split("&"));
+      setBody(
+        JSON.stringify(
+          postData.split("&").reduce(
+            (a, c) => ({
+              ...a,
+              [c.split("=")[0]]: c.split("=")[1],
+            }),
+            {},
+          ),
+          null,
+          2,
+        ),
+      );
     }
   }, [postData]);
 
