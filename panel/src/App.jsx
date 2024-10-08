@@ -41,6 +41,7 @@ function App() {
   const [backgroundPageConnection, setBackgroundPageConnection] =
     useState(null);
   const [parameters, setParameters] = useState([]);
+  const [formData, setFormData] = useState([]);
 
   useEffect(() => {
     // no need connection in dev mode
@@ -88,7 +89,6 @@ function App() {
 
   useEffect(() => {
     if (isValidFormData(postData)) {
-      console.log(postData.split("&"));
       setBody(
         JSON.stringify(
           postData.split("&").reduce(
@@ -102,8 +102,17 @@ function App() {
           2,
         ),
       );
+      setFormData(
+        postData
+          .split("&")
+          .map((item) => [item.split("=")[0], item.split("=")[1]]),
+      );
     }
   }, [postData]);
+
+  useEffect(() => {
+    setPostData(formData.map((item) => `${item[0]}=${item[1]}`).join("&"));
+  }, [formData]);
 
   return (
     <>
@@ -395,11 +404,53 @@ function App() {
           </Table>
         </TabsContent>
         <TabsContent value="Body">
-          <Table className="caption-top">
-            <TableCaption className="text-left my-0 mx-2">
-              Raw Request Body
-            </TableCaption>
-            <TableBody>
+          <Tabs defaultValue="form-data">
+            <TabsList>
+              <TabsTrigger value="form-data">form-data</TabsTrigger>
+              <TabsTrigger value="Raw">Raw</TabsTrigger>
+            </TabsList>
+            <TabsContent value="form-data">
+              <Table className="caption-top">
+                <TableCaption className="text-left my-0 mx-2">
+                  form data
+                </TableCaption>
+                <TableBody>
+                  {formData.map((item, index) => {
+                    return (
+                      <TableRow key={item[0]}>
+                        <TableCell className="font-medium">
+                          <Input
+                            placeholder="Key"
+                            value={item[0]}
+                            onChange={(e) => {
+                              const itemClone = [...formData];
+                              itemClone[index] = [...itemClone[index]];
+                              itemClone[index][0] = e.target.value;
+
+                              setFormData(itemClone);
+                            }}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Input
+                            placeholder="Value"
+                            value={item[1]}
+                            onChange={(e) => {
+                              const itemClone = [...formData];
+                              itemClone[index] = [...itemClone[index]];
+                              itemClone[index][1] = e.target.value;
+
+                              setFormData(itemClone);
+                            }}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </TabsContent>
+            <TabsContent value="Raw">
               <Textarea
                 value={body}
                 onChange={(e) => {
@@ -407,8 +458,8 @@ function App() {
                 }}
                 style={{ height: "100px" }}
               />
-            </TableBody>
-          </Table>
+            </TabsContent>
+          </Tabs>
         </TabsContent>
         <TabsContent value="Headers">Headers</TabsContent>
       </Tabs>
