@@ -86,6 +86,12 @@ function App() {
     }
   }, [parameters, value]);
 
+  useEffect(() => {
+    if (isValidFormData(postData)) {
+      setBody(postData);
+    }
+  }, [postData]);
+
   return (
     <>
       <Accordion type="single" collapsible>
@@ -200,20 +206,28 @@ function App() {
                 The URL you input is not correct, please try again.
               </Label>
             )}
-            <Textarea
-              value={postData}
-              onChange={(e) => {
-                setPostData(e.target.value);
-              }}
-              style={{ height: "100px" }}
-              className={
-                "mt-2.5 " +
-                (postData &&
-                  (isValidFormData(postData)
-                    ? "border-green-500"
-                    : "border-red-500"))
-              }
-            />
+            {selectedOption === "POST" && (
+              <Textarea
+                placeholder="key1=value1&key2=value2"
+                value={postData}
+                onChange={(e) => {
+                  setPostData(e.target.value);
+                }}
+                style={{ height: "100px" }}
+                className={
+                  "mt-2.5 " +
+                  (postData &&
+                    (isValidFormData(postData)
+                      ? "border-green-500"
+                      : "border-red-500"))
+                }
+              />
+            )}
+            {postData && !isValidFormData(postData) && (
+              <Label className="text-red-500 mt-1 inline-block">
+                The post data you input is not correct, please try again.
+              </Label>
+            )}
             <div className="flex items-center mt-4">
               <Checkbox
                 checked={selectedOption === "POST" ? true : false}
