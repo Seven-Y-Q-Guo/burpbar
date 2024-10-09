@@ -55,7 +55,6 @@ import "./App.css";
 
 function App() {
   const [value, setValue] = useState("");
-  const [accordion, setAccordion] = useState("accordion-1");
   const [body, setBody] = useState("");
   const [postData, setPostData] = useState("");
   const [tabValue, setTabValue] = useState("Parameters");
@@ -65,6 +64,7 @@ function App() {
     useState(null);
   const [parameters, setParameters] = useState([]);
   const [formData, setFormData] = useState([]);
+  const [rawText, setRawText] = useState("");
 
   useEffect(() => {
     // no need connection in dev mode
@@ -347,20 +347,36 @@ function App() {
                       <Icons.importIcon className="ml-1" />
                     </span>
                   </AlertDialogTrigger>
-                  <AlertDialogContent>
+                  <AlertDialogContent className="max-w-screen-lg">
                     <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        Are you absolutely sure?
-                      </AlertDialogTitle>
+                      <AlertDialogTitle>Raw text</AlertDialogTitle>
                       <AlertDialogDescription>
-                        This action cannot be undone. This will permanently
-                        delete your account and remove your data from our
-                        servers.
+                        <Textarea
+                          value={rawText}
+                          onChange={(e) => {
+                            console.log(123);
+                            setRawText(e.target.value);
+                          }}
+                          placeholder={
+                            'e.g. curl --location --request GET "https://example.com"'
+                          }
+                          style={{ height: "300px" }}
+                        />
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction>Continue</AlertDialogAction>
+                      <AlertDialogAction
+                        onClick={() => {
+                          if (rawText) {
+                            for (const m of rawText.matchAll(/-H.+?'(.+?)'/g)) {
+                              console.log(m[1]);
+                            }
+                          }
+                        }}
+                      >
+                        Continue
+                      </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>
