@@ -372,6 +372,8 @@ function App() {
                             for (const m of rawText.matchAll(/-H.+?'(.+?)'/g)) {
                               console.log(m[1]);
                             }
+
+                            setBody(rawText.match(/--data-raw.+?'(.+?)'/)[1]);
                           }
                         }}
                       >
