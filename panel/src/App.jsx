@@ -40,7 +40,7 @@ import {
 } from "@/components/ui/command";
 import { Icons } from "@/components/ui/icons";
 
-import Hackbar from "./Hackbar";
+import Hackbar from "./hackbar";
 
 import { isValidUrl, isValidFormData } from "./utils";
 import "./App.css";
