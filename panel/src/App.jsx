@@ -103,6 +103,9 @@ function App() {
   }, [parameters, value]);
 
   useEffect(() => {
+    if (!postData) {
+      setFormData([]);
+    }
     if (isValidFormData(postData)) {
       setBody(
         JSON.stringify(
@@ -128,6 +131,12 @@ function App() {
   useEffect(() => {
     setPostData(formData.map((item) => `${item[0]}=${item[1]}`).join("&"));
   }, [formData]);
+
+  useEffect(() => {
+    if (selectedOption === "GET") {
+      setPostData("");
+    }
+  }, [selectedOption]);
 
   return (
     <>
