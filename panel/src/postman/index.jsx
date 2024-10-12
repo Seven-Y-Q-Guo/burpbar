@@ -291,11 +291,13 @@ function Postman({
             <span className="mx-2">Size: {textareaInfo.contentLength} B</span>
           </span>
         )}
-        <Textarea
-          value={textareaInfo.content}
-          readOnly
-          style={{ height: "500px" }}
-        />
+        {textareaInfo.content && (
+          <Textarea
+            value={textareaInfo.content}
+            readOnly
+            style={{ height: "500px" }}
+          />
+        )}
       </div>
     </div>
   );
