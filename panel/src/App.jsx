@@ -373,7 +373,13 @@ function App() {
                               console.log(m[1]);
                             }
 
-                            setBody(rawText.match(/--data-raw.+?'(.+?)'/)[1]);
+                            setValue(rawText.match(/curl '(.+?)'/)[1]);
+
+                            if (rawText.match(/--data-raw.+?'(.+?)'/)[1]) {
+                              setBody(rawText.match(/--data-raw.+?'(.+?)'/)[1]);
+                              setSelectedOption("POST");
+                              setTabValue("Body");
+                            }
                           }
                         }}
                       >
