@@ -55,6 +55,7 @@ function Postman({
   body,
   setBody,
   textareaInfo,
+  backgroundPageConnection,
 }) {
   return (
     <div className="flex mt-4">

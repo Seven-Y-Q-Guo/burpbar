@@ -126,6 +126,7 @@ function App() {
         setBody={setBody}
         textareaInfo={textareaInfo}
         setTextareaInfo={setTextareaInfo}
+        backgroundPageConnection={backgroundPageConnection}
       />
     </>
   );
