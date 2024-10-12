@@ -19,6 +19,7 @@ function Hackbar({
   setSelectedOption,
   postData,
   setPostData,
+  setTabValue,
 }) {
   return (
     <div>
